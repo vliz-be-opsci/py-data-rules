@@ -80,59 +80,20 @@ def test_report():
     report_path = "./tests/resources/report.csv"
     RuleEngine(data_model, rules).execute(report_path)
     df = pd.read_csv(report_path)
-    assert (
-        df["diagnosis"][(df["column"] == "time_utc") & (df["row"] == 17)].iloc[
-            0
-        ]
-        == "regex violation"
-    )
-    assert (
-        df["diagnosis"][(df["column"] == "date") & (df["row"] == 8554)].iloc[0]
-        == "date violation"
-    )
-    assert (
-        df["diagnosis"][(df["column"] == "date") & (df["row"] == 15)].iloc[0]
-        == "datatype mismatch"
-    )
-    assert (
-        df["diagnosis"][
-            (df["column"] == "temperature") & (df["row"] == 8615)
-        ].iloc[0]
-        == "datatype mismatch"
-    )
-    assert (
-        df["diagnosis"][(df["column"] == "humidity") & (df["row"] == 7)].iloc[
-            0
-        ]
-        == "datatype mismatch"
-    )
-    assert (
-        df["diagnosis"][(df["column"] == "pressure") & (df["row"] == 1)].iloc[
-            0
-        ]
-        == "datatype mismatch"
-    )
-    assert (
-        df["diagnosis"][
-            (df["column"] == "precipitation") & (df["row"] == 4)
-        ].iloc[0]
-        == "missing value"
-    )
-    assert (
-        df["diagnosis"][
-            (df["column"] == "precipitation") & (df["row"] == 5)
-        ].iloc[0]
-        == "missing value"
-    )
-    assert (
-        df["diagnosis"][
-            (df["column"] == "wind_direction") & (df["row"] == 1)
-        ].iloc[0]
-        == "datatype mismatch"
-    )
-    assert (
-        df["diagnosis"][
-            (df["column"] == "wind_speed") & (df["row"] == 16)
-        ].iloc[0]
-        == "datatype mismatch"
-    )
+    edits = [
+        ("time_utc", 17, "regex violation"),
+        ("date", 8554, "date violation"),
+        ("date", 15, "datatype mismatch"),
+        ("temperature", 8615, "datatype mismatch"),
+        ("humidity", 7, "datatype mismatch"),
+        ("pressure", 1, "datatype mismatch"),
+        ("precipitation", 4, "missing value"),
+        ("precipitation", 5, "missing value"),
+        ("wind_direction", 1, "datatype mismatch"),
+        ("wind_speed", 16, "datatype mismatch"),
+    ]
+    for c, r, d in edits:
+        assert (
+            df["diagnosis"][(df["column"] == c) & (df["row"] == r)].iloc[0]
+            == d
+        )
