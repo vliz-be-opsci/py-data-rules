@@ -1,12 +1,15 @@
+import logging
+import re
+from datetime import datetime
+from typing import Callable, List
+
+import pandas as pd
+
 from .data_model import DataModel
 from .violation import Violation
-import pandas as pd
-from datetime import datetime
-from typing import List, Callable
-import re
-import logging
 
 logger = logging.getLogger(__name__)
+
 
 def assert_schema(data_model: DataModel) -> List[Violation]:
     violations = []
@@ -15,9 +18,19 @@ def assert_schema(data_model: DataModel) -> List[Violation]:
         schema_columns = set(table.schema.get_column_labels())
         missing_columns = schema_columns - df_columns
         excess_columns = df_columns - schema_columns
-        if missing_columns: logger.warning(f"missing columns in table {alias}: {missing_columns}")
-        if excess_columns: logger.warning(f"excess columns in table {alias}: {excess_columns}")
-        relevant_columns = [c for c in table.schema.columns if c.label in (schema_columns - missing_columns)]
+        if missing_columns:
+            logger.warning(
+                f"missing columns in table {alias}: {missing_columns}"
+            )
+        if excess_columns:
+            logger.warning(
+                f"excess columns in table {alias}: {excess_columns}"
+            )
+        relevant_columns = [
+            c
+            for c in table.schema.columns
+            if c.label in (schema_columns - missing_columns)
+        ]
         for c in relevant_columns:
             for index, value in table[c.label].items():
                 if str(value) == "nan" and c.nullable:
@@ -66,10 +79,13 @@ def regex(column, pattern, table_aliases) -> Callable:
                                 column=column,
                                 row=index + 1,
                                 value=row[column],
-                                extended_diagnosis=f"{column} must match {pattern}",
+                                extended_diagnosis=(
+                                    f"{column} must match {pattern}"
+                                ),
                             )
                         )
         return violations
+
     return fn
 
 
@@ -87,16 +103,19 @@ def membership(column, members, table_aliases: list) -> Callable:
                         column=column,
                         row=index + 1,
                         value=df.at[index, column],
-                        extended_diagnosis=f'{column} must be in {list(members)}',
+                        extended_diagnosis=(
+                            f"{column} must be in {list(members)}"
+                        ),
                     )
                 )
         return violations
+
     return fn
 
 
 def x_after_y(x: str, y: str, table_aliases: list) -> Callable:
-    """ Date X must be NULL or after date Y
-    """
+    """Date X must be NULL or after date Y"""
+
     def fn(data_model: DataModel) -> List[Violation]:
         violations = []
         for ta in table_aliases:
@@ -114,10 +133,13 @@ def x_after_y(x: str, y: str, table_aliases: list) -> Callable:
                                 column=x,
                                 row=index + 1,
                                 value=row[x],
-                                extended_diagnosis=f"{x} must be after {y} (y = {row[y]})",
+                                extended_diagnosis=(
+                                    f"{x} must be after {y} (y = {row[y]})"
+                                ),
                             )
                         )
         return violations
+
     return fn
 
 

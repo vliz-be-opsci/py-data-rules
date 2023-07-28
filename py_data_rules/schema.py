@@ -1,5 +1,6 @@
 from .column import Column
 
+
 class Schema:
     def __init__(self, columns=None):
         self.columns = columns or []
@@ -14,8 +15,8 @@ class Schema:
         self.columns.append(column)
 
     # TODO: make this behave as a dict
-    # useful to make this expose itself dictlike as a label -> column thing so one can simply
-    # given a schema
+    # useful to make this expose itself dictlike as a label -> column thing
+    # so one can simply, given a schema
     # s: Schema
     # test if a column-label is in there
     #   "mycolumn" in s

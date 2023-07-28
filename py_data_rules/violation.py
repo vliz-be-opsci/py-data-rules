@@ -1,5 +1,14 @@
 class Violation:
-    def __init__(self, diagnosis, table, column, row: int, value, repair=None, extended_diagnosis=None):
+    def __init__(
+        self,
+        diagnosis,
+        table,
+        column,
+        row: int,
+        value,
+        repair=None,
+        extended_diagnosis=None,
+    ):
         self.diagnosis = diagnosis
         self.table = table
         self.column = column
@@ -13,7 +22,9 @@ class Violation:
             self.table = data_model[self.table]
 
         if isinstance(self.column, str):
-            columns = [c for c in self.table.schema.columns if c.label == self.column]
+            columns = [
+                c for c in self.table.schema.columns if c.label == self.column
+            ]
             assert len(columns) == 1
             self.column = columns[0]
             # TODO: use dict-like behaviour in schema, would be simplified to:

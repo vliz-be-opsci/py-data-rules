@@ -13,12 +13,12 @@ classifiers = [
     # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.9",
 ]
 
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.9"
 poetry = "^1.5.0"
 
 # Development tools
@@ -39,6 +39,7 @@ sphinx = {version = "^7.0.1", optional = true}
 
 # Poetry has the dependecies groups, but those are not 
 #   compatible with extras, widely used in the python-verse.
+pandas = "^2.0.3"
 [tool.poetry.extras]
 dev = ["pre-commit", "isort", "black", "flake8"]
 tests = ["pyyaml","pytest", "coverage", "python-dotenv", "pytest-cov"]

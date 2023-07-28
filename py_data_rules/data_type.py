@@ -1,26 +1,28 @@
+import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-import re
 
 
-class DataType(ABC): # TODO: this should be interface
+class DataType(ABC):  # TODO: this should be interface
     @staticmethod
     @abstractmethod
     def match(instance: str) -> bool:
         assert instance
         return NotImplementedError
-    
-    @staticmethod # TODO: this should be abstract
+
+    @staticmethod  # TODO: this should be abstract
     def repair(instance: str):
         assert instance
         return None
 
 
-class XSDString(DataType):  # TODO: allow to instantiate XSDString with regex, as opposed to using rule_factory.regex
+class XSDString(DataType):  # TODO: allow to instantiate XSDString with regex,
+    # as opposed to using rule_factory.regex
     @staticmethod
     def match(instance):
         assert instance
         return True
+
 
 class XSDInteger(DataType):
     @staticmethod
@@ -50,7 +52,7 @@ class XSDFloat(DataType):
         try:
             float(instance)
             return True
-        except:
+        except ValueError:
             return False
 
     @classmethod
@@ -59,10 +61,7 @@ class XSDFloat(DataType):
             return [i for i, c in enumerate(string) if c == char]
 
         transformation = (
-            instance
-            .replace(" ", "")
-            .replace("'", "")
-            .replace("_", "")
+            instance.replace(" ", "").replace("'", "").replace("_", "")
         )
         p = _find(transformation, ".")
         c = _find(transformation, ",")
@@ -83,10 +82,8 @@ class XSDFloat(DataType):
             if p[0] > c[-1]:
                 transformation = transformation.replace(",", "")
             else:
-                transformation = (
-                    transformation
-                    .replace(".", "")
-                    .replace(",", ".")
+                transformation = transformation.replace(".", "").replace(
+                    ",", "."
                 )
 
         if cls.match(transformation):
@@ -105,14 +102,16 @@ class XSDDate(DataType):
             try:
                 datetime.strptime(instance, fmt)
                 return True
-            except:
+            except ValueError:
                 pass
         return False
 
 
 class XSDDateTime(XSDDate):
     def __init__(self, formats=None):
-        self.formats = formats or ["%Y-%m-%dT%H:%M:%S.%fZ"] # TODO: verify this
+        self.formats = formats or [
+            "%Y-%m-%dT%H:%M:%S.%fZ"
+        ]  # TODO: verify this
         super().__init__(self.formats)
 
 
