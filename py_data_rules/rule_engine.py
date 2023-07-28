@@ -6,15 +6,17 @@ import csv
 import logging
 from inspect import getmembers, isfunction
 from types import ModuleType
-from typing import List, Callable, Union
+from typing import List, Callable, Union, Dict
 
 logger = logging.getLogger(__name__)
 
 class RuleEngine:  # TODO: find better name, e.g. QCExecutor, or even better
-    def __init__(self, data_model: Union[DataModel, ModuleType], rules: Union[List[Rule], ModuleType], implicit: bool = True):
+    def __init__(self, data_model: Union[DataModel, Dict, ModuleType], rules: Union[List[Rule], ModuleType] = None, implicit: bool = True):
         self.violations: List[Violation] = []
         if isinstance(data_model, DataModel):
             self.data_model = data_model
+        elif isinstance(data_model, Dict):
+            self.data_model = DataModel(data_model)
         elif isinstance(data_model, ModuleType):
             data_model_retrieval_flag = False
             for _, value in getmembers(data_model):
@@ -24,9 +26,11 @@ class RuleEngine:  # TODO: find better name, e.g. QCExecutor, or even better
                     break
             if not data_model_retrieval_flag: raise RuntimeError(f"no DataModel found in {data_model}")
         else:
-            raise TypeError(f"data_model must be a DataModel or a Module, not {type(data_model)}")
+            raise TypeError(f"data_model must be a DataModel, Dict or Module, not {type(data_model)}")
         self.rules = []
-        if isinstance(rules, List):
+        if not rules:
+            pass
+        elif isinstance(rules, List):
             for rule in rules:
                 if isinstance(rule, Rule):
                     self.rules.append(rule)

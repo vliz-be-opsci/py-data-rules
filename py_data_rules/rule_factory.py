@@ -58,7 +58,7 @@ def regex(column, pattern, table_aliases) -> Callable:
             df = data_model[ta]
             for index, row in df.iterrows():
                 if not pd.isna(row[column]):
-                    if not re.match(pattern, column):
+                    if not re.match(pattern, row[column]):
                         violations.append(
                             Violation(
                                 diagnosis="regex violation",

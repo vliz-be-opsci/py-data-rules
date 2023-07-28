@@ -16,11 +16,31 @@ class DataType(ABC): # TODO: this should be interface
         return None
 
 
-class XSDString(DataType):
+class XSDString(DataType):  # TODO: allow to instantiate XSDString with regex, as opposed to using rule_factory.regex
     @staticmethod
     def match(instance):
         assert instance
         return True
+
+class XSDInteger(DataType):
+    @staticmethod
+    def match(instance):
+        assert instance
+        if "." in instance:
+            return False
+        try:
+            int(instance)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def repair(instance):
+        assert instance
+        try:
+            return int(instance)
+        except ValueError:
+            return None
 
 
 class XSDFloat(DataType):
