@@ -25,3 +25,4 @@ __pycache__/
 .pytest_cache
 
 tests/resources/report.csv
+tests/resources/report_test_rule_factory.csv
