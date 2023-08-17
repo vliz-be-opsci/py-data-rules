@@ -41,7 +41,9 @@ class RuleEngine:  # TODO: find better name, e.g. QCExecutor, or even better
         self.rules = []
         if not rules:
             pass
-        elif isinstance(rules, List):
+        elif isinstance(
+            rules, List
+        ):  # TODO: should be able to accept a single Rule or Callable as well
             for rule in rules:
                 if isinstance(rule, Rule):
                     self.rules.append(rule)

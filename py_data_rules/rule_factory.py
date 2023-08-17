@@ -141,21 +141,3 @@ def x_after_y(x: str, y: str, table_aliases: list) -> Callable:
         return violations
 
     return fn
-
-
-# TODO: cleanup
-# def fn_xyz(model: DataModel) -> List[Violation]:
-#     pass
-
-# rules: List[Rule] = [Rule(fn_xyz), ...]
-
-# class KnownRules(Enum):
-#     XYZ = Rule(fn_xyz)
-
-# def fn_emobon_eval1(model) -> List:
-#     pass
-
-# class KnownEMOBONRules(Enum):
-#     EVAL1=Rule(fn_emobon_eval1)
-
-# myrules = [KnownRules.XYZ, KnownEMOBONRules.EVAL1, ...]

@@ -16,12 +16,16 @@ class DataType(ABC):  # TODO: this should be interface
         return None
 
 
-class XSDString(DataType):  # TODO: allow to instantiate XSDString with regex,
-    # as opposed to using rule_factory.regex
-    @staticmethod
-    def match(instance):
+class XSDString(DataType):
+    def __init__(self, pattern=None):
+        self.pattern = pattern or r".*"
+
+    def match(self, instance):
         assert instance
-        return True
+        if re.match(self.pattern, instance):
+            return True
+        else:
+            return False
 
 
 class XSDInteger(DataType):
@@ -40,7 +44,7 @@ class XSDInteger(DataType):
     def repair(instance):
         assert instance
         try:
-            return int(instance)
+            return str(int(float(instance)))
         except ValueError:
             return None
 
@@ -94,7 +98,9 @@ class XSDFloat(DataType):
 
 class XSDDate(DataType):
     def __init__(self, formats=None):
-        self.formats = formats or ["%Y-%m-%d"]
+        self.formats = formats or ["%Y-%m-%d"]  # ISO 8601
+        if isinstance(formats, str):
+            self.formats = [self.formats]
 
     def match(self, instance):
         assert instance
@@ -109,9 +115,7 @@ class XSDDate(DataType):
 
 class XSDDateTime(XSDDate):
     def __init__(self, formats=None):
-        self.formats = formats or [
-            "%Y-%m-%dT%H:%M:%S.%fZ"
-        ]  # TODO: verify this
+        self.formats = formats or ["%Y-%m-%dT%H:%M:%SZ"]  # ISO 8601
         super().__init__(self.formats)
 
 
@@ -138,6 +142,9 @@ class XSDBoolean(DataType):
 
 
 class XSDAnyURI(DataType):
+    def __init__(self, base_uri=None):
+        self.base_uri = base_uri or ""
+
     @staticmethod
     def match(instance):
         assert instance
@@ -146,19 +153,10 @@ class XSDAnyURI(DataType):
         else:
             return False
 
-
-if __name__ == "__main__":  # TODO: these should become proper unit tests
-    print(XSDFloat.repair("ATextField"))
-    print(XSDFloat.repair("8603700"))
-    print(XSDFloat.repair("8,603,700"))
-    print(XSDFloat.repair("8.603.700"))
-    print(XSDFloat.repair("8603700.80"))
-    print(XSDFloat.repair("8603700,80"))
-    print(XSDFloat.repair("8 603 700.80"))
-    print(XSDFloat.repair("8 603 700,80"))
-    print(XSDFloat.repair("8'603'700.80"))
-    print(XSDFloat.repair("8'603'700,80"))
-    print(XSDFloat.repair("8_603_700.80"))
-    print(XSDFloat.repair("8_603_700,80"))
-    print(XSDFloat.repair("8,603,700.80"))
-    print(XSDFloat.repair("8.603.700,80"))
+    def repair(self, instance: str):
+        assert instance
+        instance = self.base_uri + instance
+        if self.match(instance):
+            return instance
+        else:
+            return None
