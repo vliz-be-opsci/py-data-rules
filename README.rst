@@ -26,13 +26,8 @@ Usage
 Here's an example of how to use py-data-rules:
 
 .. code-block:: python
-
     import py-data-rules
-
     # Implement a code example
-
-
-
 For more detailed information on the usage of py-data-rules, refer to the `official documentation <https://open-science.vliz.be/py-data-rules/>`.
 
 
@@ -56,37 +51,25 @@ Start using this project with poetry
 
 
 .. code-block:: bash
-
     $ make init       # install dependencies
     $ make init-dev   # includes the previous + adds dependencies for developers
-
 Build Docs
 
 .. code-block:: bash
-
     $ make docs
-
-
 Developers
 ----------
 
 Run Tests
 
 .. code-block:: bash
-
     $ make test                                                   # to run all tests
     $ PYTEST_LOGCONF=debug-logconf.yml python tests/test_demo.py  # to run a specific test with specific logging
     $ make test-coverage                                          # to run all tests and check the test coverage
-
-
 Check the code-style and syntax (flake8, black, isort)
 
 .. code-block:: bash
-
     $ make check
-
-
-
 .. image:: https://github.com/vliz-be-opsci/py-data-rules/blob/gh-pages/coverage.svg
    :align: center
    :target: https://github.com/JotaFan/pycoverage
@@ -95,5 +78,3 @@ Check the code-style and syntax (flake8, black, isort)
    :align: center
    :alt: Code style: black
    :target: https://github.com/psf/black
-
-
