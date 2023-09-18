@@ -121,10 +121,11 @@ def x_after_y(x: str, y: str, table_aliases: list) -> Callable:
         for ta in table_aliases:
             df = data_model[ta]
             for index, row in df.iterrows():
-                if not data_model.isna(row[x]):
+                if not (data_model.isna(row[x]) or data_model.isna(row[y])):
+                    # TODO assuming ISO date now
                     if not (
-                        datetime.strptime(row[x], "%Y-%m-%d")
-                        >= datetime.strptime(row[y], "%Y-%m-%d")
+                        datetime.strptime(row[x][0:10], "%Y-%m-%d")
+                        >= datetime.strptime(row[y][0:10], "%Y-%m-%d")
                     ):
                         violations.append(
                             Violation(
