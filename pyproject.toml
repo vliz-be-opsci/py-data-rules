@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "py_data_rules"
-version = "0.1.0"
+version = "0.1.1"
 description = "data quality framework"
 authors = ["Vlaams Instituut voor de Zee (VLIZ) <opsci-dev@vliz.be>"]
 readme = "README.rst"

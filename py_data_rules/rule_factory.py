@@ -3,8 +3,6 @@ import re
 from datetime import datetime
 from typing import Callable, List
 
-import pandas as pd
-
 from .data_model import DataModel
 from .violation import Violation
 
@@ -33,9 +31,11 @@ def assert_schema(data_model: DataModel) -> List[Violation]:
         ]
         for c in relevant_columns:
             for index, value in table[c.label].items():
-                if str(value) == "nan" and c.nullable:
+                if data_model.isna(value) and c.nullable:
                     continue
-                if str(value) == "nan" and not c.nullable:
+                if value == data_model.na_literal and not c.nullable:
+                    continue
+                if value == data_model.null_literal and not c.nullable:
                     violations.append(
                         Violation(
                             diagnosis="missing value",
@@ -48,8 +48,8 @@ def assert_schema(data_model: DataModel) -> List[Violation]:
                     continue
                 # TODO: if ...
                 #   check trim whitespace ...
-                if not c.data_type.match(str(value)):
-                    repair = c.data_type.repair(str(value)) or ""
+                if not c.data_type.match(value):
+                    repair = c.data_type.repair(value) or ""
                     violations.append(
                         Violation(
                             diagnosis="datatype mismatch",
@@ -70,7 +70,7 @@ def regex(column, pattern, table_aliases) -> Callable:
         for ta in table_aliases:
             df = data_model[ta]
             for index, row in df.iterrows():
-                if not pd.isna(row[column]):
+                if not data_model.isna(row[column]):
                     if not re.match(pattern, row[column]):
                         violations.append(
                             Violation(
@@ -121,7 +121,7 @@ def x_after_y(x: str, y: str, table_aliases: list) -> Callable:
         for ta in table_aliases:
             df = data_model[ta]
             for index, row in df.iterrows():
-                if not pd.isna(row[x]):
+                if not data_model.isna(row[x]):
                     if not (
                         datetime.strptime(row[x], "%Y-%m-%d")
                         >= datetime.strptime(row[y], "%Y-%m-%d")

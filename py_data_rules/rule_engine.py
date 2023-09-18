@@ -93,7 +93,7 @@ class RuleEngine:  # TODO: find better name, e.g. QCExecutor, or even better
             except Exception as e:
                 logger.error(
                     f"rule evaluation failed for {rule.name}"
-                    f" with exception {e}"
+                    f" with exception {type(e).__name__}: {e}"
                 )
         self._export_violations(report_path=report_path)
         return self.violations

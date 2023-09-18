@@ -112,6 +112,14 @@ class XSDDate(DataType):
                 pass
         return False
 
+    def repair(self, instance: str):
+        assert instance
+        datetime_truncation = instance[0:10]
+        if self.match(datetime_truncation):
+            return datetime_truncation
+        else:
+            return None
+
 
 class XSDDateTime(XSDDate):
     def __init__(self, formats=None):
@@ -131,11 +139,12 @@ class XSDBoolean(DataType):
     @staticmethod
     def repair(instance: str):
         assert instance
-        trues = ["Y", "y", "yes"]
-        falses = ["N", "n", "no"]
-        if instance in trues:
+        trues = ["t", "true", "y", "yes"]
+        falses = ["f", "false", "n", "no"]
+        instance_lower = instance.lower()
+        if instance_lower in trues:
             return "true"
-        elif instance in falses:
+        elif instance_lower in falses:
             return "false"
         else:
             return None

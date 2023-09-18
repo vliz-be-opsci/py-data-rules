@@ -10,7 +10,7 @@ class Schema:
         return [c.label for c in self.columns]
 
     def add_column(self, *args, **kwargs):
-        if isinstance(args[0], Column):
+        if len(args) == 1 and isinstance(args[0], Column):
             column = args[0]
         else:
             column = Column(*args, **kwargs)

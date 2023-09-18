@@ -9,7 +9,9 @@ from py_data_rules.violation import Violation
 
 
 def read_wobs(path) -> pd.DataFrame:
-    return pd.read_csv(path, delimiter=";")
+    return pd.read_csv(
+        path, delimiter=";", dtype=object, keep_default_na=False
+    )
 
 
 class Angle(DataType):
