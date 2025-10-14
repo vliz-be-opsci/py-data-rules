@@ -96,6 +96,10 @@ class XSDFloat(DataType):
             return None
 
 
+class XSDDouble(XSDFloat):
+    pass
+
+
 class XSDDate(DataType):
     def __init__(self, formats=None):
         self.formats = formats or ["%Y-%m-%d"]  # ISO 8601
