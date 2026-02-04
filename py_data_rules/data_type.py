@@ -97,7 +97,7 @@ class XSDFloat(DataType):
 
 
 class XSDDouble(XSDFloat):
-    pass
+    pass  # TODO provide implementation
 
 
 class XSDDate(DataType):

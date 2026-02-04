@@ -12,7 +12,7 @@ from .violation import Violation
 logger = logging.getLogger(__name__)
 
 
-class RuleEngine:  # TODO: find better name, e.g. QCExecutor, or even better
+class RuleEngine:
     def __init__(
         self,
         data_model: Union[DataModel, Dict, ModuleType],

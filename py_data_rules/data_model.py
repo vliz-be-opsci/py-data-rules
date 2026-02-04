@@ -2,7 +2,7 @@ from .table import Table
 
 
 class DataModel:
-    def __init__(self, description: dict, na_literal: str = "N/A"):
+    def __init__(self, description: dict):
         required_keys = {"path", "reader", "schema"}
         for alias, descr in description.items():
             missing_keys = required_keys - descr.keys()
@@ -11,8 +11,6 @@ class DataModel:
                 f"{alias}"
             )
         self.description: dict = description
-        self.na_literal: str = na_literal
-        self.null_literal: str = ""
         self.tables: dict = {}
         self._generate_tables()
 
@@ -31,6 +29,3 @@ class DataModel:
 
     def items(self):
         return self.tables.items()
-
-    def isna(self, value: str) -> bool:
-        return value in (self.null_literal, self.na_literal)
