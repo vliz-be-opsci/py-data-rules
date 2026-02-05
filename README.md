@@ -33,4 +33,4 @@ In general, Table objects can be retrieved via their alias from the `table_dict`
 The RuleEngine is the object that effectively performs the data validation and generates a violation report. A DataModel and a list of Rules are required to instantiate an engine.
 
 
-![](image/PyDataRules.drawio.png)
+![](assets/PyDataRules.drawio.png)
