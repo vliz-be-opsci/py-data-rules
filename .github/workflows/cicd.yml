@@ -1,20 +1,26 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Pull Request Checker
+name: CI/CD
 
 on:
-  pull_request:
-    types: [opened, synchronize]
   workflow_dispatch:
 
+  push:
+    branches:
+      - main
+
+  pull_request:
+    types: [opened, synchronize]
+
 jobs:
-  PR-Checker:
-
+  job:
     runs-on: ubuntu-latest
-
     steps:
+    - name: checkout
     - uses: actions/checkout@v3.5.2
+
+    - name: paths-filter
     - uses: dorny/paths-filter@v2
       id: filter
       with:
@@ -28,9 +34,10 @@ jobs:
       uses: actions/setup-python@v4.6.0
       with:
         python-version: 3.9
+
     - name: Install dependencies
       run: |
-        make init-dev
+        make init
         pip install -e .[tests]
 
     - name: Linting check
