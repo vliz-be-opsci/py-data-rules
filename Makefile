@@ -65,3 +65,6 @@ build: update check test docs
 
 release: build
 	$(POETRY) release
+
+run:
+	$(POETRY) run py_data_rules
