@@ -1,37 +1,50 @@
+"""https://www.w3.org/TR/xmlschema-2/#built-in-datatypes
+"""
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
 
 
-class DataType(ABC):  # TODO: this should be interface
+class DataType(ABC):
+    """Any DataType assumes that no None or "" is passed to its methods.
+    This is ensured by the assert_schema rule.
+    """
+
     @staticmethod
     @abstractmethod
     def match(instance: str) -> bool:
-        assert instance
-        return NotImplementedError
+        raise NotImplementedError
 
-    @staticmethod  # TODO: this should be abstract
-    def repair(instance: str):
-        assert instance
+    @staticmethod
+    def repair(instance: str) -> str | None:
+        """This method should not be abstract as not all extended data types
+        will override it.
+        """
         return None
 
 
-class XSDString(DataType):
+class XSDAnyType(DataType):
+    ...
+
+
+class XSDAnySimpleType(XSDAnyType):
+    ...
+
+
+class XSDString(XSDAnySimpleType):
     def __init__(self, pattern=None):
         self.pattern = pattern or r".*"
 
     def match(self, instance):
-        assert instance
         if re.match(self.pattern, instance):
             return True
         else:
             return False
 
 
-class XSDInteger(DataType):
+class XSDInteger(XSDAnySimpleType):
     @staticmethod
     def match(instance):
-        assert instance
         if "." in instance:
             return False
         try:
@@ -42,17 +55,15 @@ class XSDInteger(DataType):
 
     @staticmethod
     def repair(instance):
-        assert instance
         try:
             return str(int(float(instance)))
         except ValueError:
             return None
 
 
-class XSDFloat(DataType):
+class XSDFloat(XSDAnySimpleType):
     @staticmethod
     def match(instance):
-        assert instance
         try:
             float(instance)
             return True
@@ -96,18 +107,17 @@ class XSDFloat(DataType):
             return None
 
 
-class XSDDouble(XSDFloat):
-    pass  # TODO provide implementation
+class XSDDouble(XSDAnySimpleType):
+    ...
 
 
-class XSDDate(DataType):
+class XSDDate(XSDAnySimpleType):
     def __init__(self, formats=None):
         self.formats = formats or ["%Y-%m-%d"]  # ISO 8601
         if isinstance(formats, str):
             self.formats = [self.formats]
 
     def match(self, instance):
-        assert instance
         for fmt in self.formats:
             try:
                 datetime.strptime(instance, fmt)
@@ -117,7 +127,6 @@ class XSDDate(DataType):
         return False
 
     def repair(self, instance: str):
-        assert instance
         datetime_truncation = instance[0:10]
         if self.match(datetime_truncation):
             return datetime_truncation
@@ -125,16 +134,15 @@ class XSDDate(DataType):
             return None
 
 
-class XSDDateTime(XSDDate):
+class XSDDateTime(XSDDate):  # TODO inherit from XSDAnySimpleType
     def __init__(self, formats=None):
         self.formats = formats or ["%Y-%m-%dT%H:%M:%SZ"]  # ISO 8601
         super().__init__(self.formats)
 
 
-class XSDBoolean(DataType):
+class XSDBoolean(XSDAnySimpleType):
     @staticmethod
     def match(instance):
-        assert instance
         if instance in ["true", "false", "1", "0"]:
             return True
         else:
@@ -142,7 +150,6 @@ class XSDBoolean(DataType):
 
     @staticmethod
     def repair(instance: str):
-        assert instance
         trues = ["t", "true", "y", "yes"]
         falses = ["f", "false", "n", "no"]
         instance_lower = instance.lower()
@@ -154,20 +161,18 @@ class XSDBoolean(DataType):
             return None
 
 
-class XSDAnyURI(DataType):
+class XSDAnyURI(XSDAnySimpleType):
     def __init__(self, base_uri=None):
         self.base_uri = base_uri or ""
 
     @staticmethod
     def match(instance):
-        assert instance
         if re.match(r".+:.+", instance):
             return True
         else:
             return False
 
     def repair(self, instance: str):
-        assert instance
         instance = self.base_uri + instance
         if self.match(instance):
             return instance

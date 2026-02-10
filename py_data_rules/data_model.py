@@ -16,7 +16,13 @@ class DataModel:
 
     def _generate_tables(self):
         for alias, descr in self.description.items():
-            self.tables.update({alias: Table(**descr, alias=alias)})
+            self.tables.update(
+                {
+                    alias: Table(  # pyrefly: ignore[no-matching-overload]
+                        **descr, alias=alias
+                    )
+                }
+            )
 
     def __getitem__(self, alias: str) -> Table:
         return self.tables[alias]

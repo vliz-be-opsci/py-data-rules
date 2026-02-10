@@ -3,15 +3,14 @@ import pandas as pd
 import py_data_rules.rule_factory as rf
 from py_data_rules.column import Column
 from py_data_rules.data_type import DataType, XSDDate, XSDFloat, XSDInteger
+from py_data_rules.dsv import read_dsv
 from py_data_rules.rule_engine import RuleEngine
 from py_data_rules.schema import Schema
 from py_data_rules.violation import Violation
 
 
-def read_wobs(path) -> pd.DataFrame:
-    return pd.read_csv(
-        path, delimiter=";", dtype=object, keep_default_na=False
-    )
+def read_wobs(path):
+    return read_dsv(path, delimiter=";")
 
 
 class Angle(DataType):
@@ -78,7 +77,7 @@ def date_rule(data_model):
 rules = [time_utc_rule, date_rule]
 
 
-def test_report():
+def test_main():
     report_path = "./tests/resources/report.csv"
     RuleEngine(data_model, rules).execute(report_path)
     df = pd.read_csv(report_path)
@@ -99,3 +98,9 @@ def test_report():
             df["diagnosis"][(df["column"] == c) & (df["row"] == r)].iloc[0]
             == d
         )
+
+
+# this block isn't required for pytest, but is useful for
+# test-driven development
+if __name__ == "__main__":
+    test_main()

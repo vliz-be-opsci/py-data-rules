@@ -3,6 +3,8 @@ import re
 from datetime import datetime
 from typing import Callable, List
 
+import pandas as pd
+
 from .data_model import DataModel
 from .violation import Violation
 
@@ -31,11 +33,9 @@ def assert_schema(data_model: DataModel) -> List[Violation]:
         ]
         for c in relevant_columns:
             for index, value in table[c.label].items():
-                if data_model.isna(value) and c.nullable:
+                if pd.isna(value) and c.nullable:
                     continue
-                if value == data_model.na_literal and not c.nullable:
-                    continue
-                if value == data_model.null_literal and not c.nullable:
+                if pd.isna(value) and not c.nullable:
                     violations.append(
                         Violation(
                             diagnosis="missing value",
@@ -48,6 +48,7 @@ def assert_schema(data_model: DataModel) -> List[Violation]:
                     continue
                 # TODO: if ...
                 #   check trim whitespace ...
+                #   should "trim" still be supported?
                 if not c.data_type.match(value):
                     repair = c.data_type.repair(value) or ""
                     violations.append(
@@ -70,7 +71,9 @@ def regex(column, pattern, table_aliases) -> Callable:
         for ta in table_aliases:
             df = data_model[ta]
             for index, row in df.iterrows():
-                if not data_model.isna(row[column]):
+                if not isinstance(index, int):
+                    raise ValueError("DataFrame index must be an integer")
+                if not pd.isna(row[column]):
                     if not re.match(pattern, row[column]):
                         violations.append(
                             Violation(
@@ -114,14 +117,19 @@ def membership(column, members, table_aliases: list) -> Callable:
 
 
 def x_after_y(x: str, y: str, table_aliases: list) -> Callable:
-    """Date X must be NULL or after date Y"""
+    """Date X must be NULL or after date Y
+
+    pairwise-column comparison
+    """
 
     def fn(data_model: DataModel) -> List[Violation]:
         violations = []
         for ta in table_aliases:
             df = data_model[ta]
             for index, row in df.iterrows():
-                if not (data_model.isna(row[x]) or data_model.isna(row[y])):
+                if not isinstance(index, int):
+                    raise ValueError("DataFrame index must be an integer")
+                if not (pd.isna(row[x]) or pd.isna(row[y])):
                     # TODO assuming ISO date now
                     if not (
                         datetime.strptime(row[x][0:10], "%Y-%m-%d")

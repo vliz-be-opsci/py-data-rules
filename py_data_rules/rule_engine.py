@@ -16,7 +16,7 @@ class RuleEngine:
     def __init__(
         self,
         data_model: Union[DataModel, Dict, ModuleType],
-        rules: Union[List[Rule], ModuleType] = None,
+        rules: Union[List[Rule], ModuleType, None] = None,
         implicit: bool = True,
     ):
         self.violations: List[Violation] = []
