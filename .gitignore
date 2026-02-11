@@ -27,3 +27,7 @@ __pycache__/
 
 tests/resources/report.csv
 tests/resources/report_test_rule_factory.csv
+
+tdd-*/
+*tdd.py
+*tdd_*.py
